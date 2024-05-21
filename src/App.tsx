@@ -5,6 +5,7 @@ import Campaign from "./pages/Campaign";
 import Offer from "./pages/Offer";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import Settings from "./pages/Settings";
+import Login from "./pages/Login";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <div>
         <BrowserRouter>
           <Routes>
+            <Route path="/" element={<Login />} />
             <Route path="/dashboard" element={<DashboardLayout />}>
               <Route path="home" element={<Home />} />
               <Route path="campaign" element={<Campaign />} />

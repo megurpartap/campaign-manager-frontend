@@ -10,6 +10,7 @@ import {
   SheetTrigger,
 } from "../ui/sheet";
 import OfferForm from "../Forms/OfferForm";
+import CampaignForm from "../Forms/CampaignForm";
 
 interface TopbarProps {
   currentPage: "offer" | "campaign";
@@ -24,7 +25,7 @@ const currentPageObject = {
   campaign: {
     title: "Campaign",
     description: "This Page is publicly visible",
-    formComponent: <OfferForm />,
+    formComponent: <CampaignForm />,
   },
 };
 
@@ -51,7 +52,7 @@ const Topbar = ({ currentPage }: TopbarProps) => {
               </span>
             </Button>
           </SheetTrigger>
-          <SheetContent className=" max-w-sm sm:max-w-6xl">
+          <SheetContent className=" max-w-sm sm:max-w-4xl">
             <SheetHeader>
               <SheetTitle>
                 {`Add ${currentPageObject[currentPage].title}`}
