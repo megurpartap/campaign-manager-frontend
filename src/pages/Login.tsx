@@ -8,13 +8,28 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 
 function Login() {
-  useEffect(() => {
-    axios.get(`${conf.API_URL}/users/getLoginStatus`).then((response) => {
-      console.log(response.data);
-    });
-  }, []);
   const navigate = useNavigate();
   const { toast } = useToast();
+  useEffect(() => {
+    const rt = localStorage.getItem("exampleRefreshToken");
+    if (rt && rt !== String(null)) {
+      axios
+        .get(`${conf.API_URL}/users/getLoginStatus`, {
+          headers: {
+            Authorization: `Bearer ${rt}`,
+          },
+        })
+        .then((response) => {
+          if (response.data.success) {
+            toast({
+              variant: "success",
+              title: "User Already Logged In",
+            });
+            navigate("/dashboard/home?login=true");
+          }
+        });
+    }
+  }, []);
 
   function login() {
     console.log("reached log in button");
@@ -22,6 +37,7 @@ function Login() {
       console.log(response);
       if (response.status === "connected") {
         console.log("Person is connected");
+        localStorage.setItem("fbUserId", response.authResponse.userID);
         axios
           .post(
             `${conf.API_URL}/users/login`,
@@ -35,6 +51,10 @@ function Login() {
           )
           .then((response) => {
             if (response.data.success) {
+              localStorage.setItem(
+                "exampleRefreshToken",
+                response.data.data.refreshToken
+              );
               toast({
                 variant: "success",
                 title: "Login Successful",
@@ -44,7 +64,14 @@ function Login() {
             }
           })
           .catch((error) => {
-            console.log(error);
+            console.log(error.response.data.message);
+            toast({
+              variant: "destructive",
+              title: "Login Failed",
+              description: `Login failed. Please try again. Error: ${
+                error.response.data.message || ""
+              }`,
+            });
           });
       } else {
         // something

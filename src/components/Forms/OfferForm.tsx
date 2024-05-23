@@ -71,26 +71,41 @@ const OfferForm = () => {
     toast({
       title: "Creating Offer...",
     });
-    const response = await axios.post(
-      `${conf.API_URL}/offers/createOffer`,
-      data
-    );
+    try {
+      const response = await axios.post(
+        `${conf.API_URL}/offers/createOffer`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              "exampleRefreshToken"
+            )}`,
+          },
+        }
+      );
 
-    if (response.status === 200) {
-      form.reset();
-      toast({
-        variant: "success",
-        title: "Offer Created Successfully",
-        description: `Offer Name: ${response.data.data.offerName}`,
-      });
-    } else {
+      if (response.status === 200) {
+        form.reset();
+        toast({
+          variant: "success",
+          title: "Offer Created Successfully",
+          description: `Offer Name: ${response.data.data.offerName}`,
+        });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Failed to create Offer",
+          description: response.data.error.message || "Something went wrong",
+        });
+      }
+      console.log(response);
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Failed to create Offer",
-        description: response.data.error.message || "Something went wrong",
+        description: error.message || "Something went wrong",
       });
     }
-    console.log(response);
   }
 
   return (
