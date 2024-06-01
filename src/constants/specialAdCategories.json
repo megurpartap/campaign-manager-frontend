@@ -1,0 +1,6 @@
+[
+  { "id": "EMPLOYMENT", "label": "Employment" },
+  { "id": "HOUSING", "label": "Housing" },
+  { "id": "CREDIT", "label": "Credit" },
+  { "id": "ISSUES_ELECTIONS_POLITICS", "label": "Issues, Elections, Politics" }
+]

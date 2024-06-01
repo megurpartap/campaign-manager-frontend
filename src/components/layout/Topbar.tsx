@@ -52,7 +52,7 @@ const Topbar = ({ currentPage }: TopbarProps) => {
               </span>
             </Button>
           </SheetTrigger>
-          <SheetContent className=" max-w-sm sm:max-w-4xl">
+          <SheetContent className=" max-w-sm sm:max-w-4xl overflow-y-scroll">
             <SheetHeader>
               <SheetTitle>
                 {`Add ${currentPageObject[currentPage].title}`}
