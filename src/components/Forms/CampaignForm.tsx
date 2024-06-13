@@ -62,8 +62,7 @@ const CampaignForm = () => {
   const [adAccounts, setAdAccounts] = useState([]);
   const [pages, setPages] = useState([]);
   const [offers, setOffers] = useState([]);
-  const [campaignResponse, setCampaignResponse] =
-    useState<campaignResponseObject>({});
+  const [campaignResponse] = useState<campaignResponseObject>({});
 
   useEffect(() => {
     async function fetchAdAccounts() {

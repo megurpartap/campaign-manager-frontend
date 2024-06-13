@@ -1,6 +1,6 @@
 import { FaFacebook } from "react-icons/fa";
 import { useEffect } from "react";
-import { fbLogin, getFacebookLoginStatus } from "@/utils/FacebookSDK";
+import { fbLogin } from "@/utils/FacebookSDK";
 import axios from "axios";
 import conf from "@/config/index.js";
 import { Button } from "@/components/ui/button";
