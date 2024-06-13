@@ -1,0 +1,43 @@
+{
+  "mapFunction": [
+    { "value": "NO_BUTTON", "label": "No Button" },
+    { "value": "SUBSCRIBE", "label": "Subscribe" },
+    { "value": "WATCH_MORE", "label": "Watch More" },
+    { "value": "GET_OFFER", "label": "Get Offer" },
+    { "value": "APPLY_NOW", "label": "Apply Now" },
+    { "value": "BOOK_NOW", "label": "Book Now" },
+    { "value": "BUY_TICKETS", "label": "Buy Tickets" },
+    { "value": "CONTACT_US", "label": "Contact Us" },
+    { "value": "DOWNLOAD", "label": "Download" },
+    { "value": "GET_QUOTE", "label": "Get Quote" },
+    { "value": "GET_SHOWTIMES", "label": "Get Showtimes" },
+    { "value": "LEARN_MORE", "label": "Learn More" },
+    { "value": "LISTEN_NOW", "label": "Listen Now" },
+    { "value": "ORDER_NOW", "label": "Order Now" },
+    { "value": "PLAY_GAME", "label": "Play Game" },
+    { "value": "REQUEST_TIME", "label": "Request Time" },
+    { "value": "SHOP_NOW", "label": "Shop Now" },
+    { "value": "SIGN_UP", "label": "Sign Up" }
+  ],
+
+  "types": [
+    "NO_BUTTON",
+    "SUBSCRIBE",
+    "WATCH_MORE",
+    "GET_OFFER",
+    "APPLY_NOW",
+    "BOOK_NOW",
+    "BUY_TICKETS",
+    "CONTACT_US",
+    "DOWNLOAD",
+    "GET_QUOTE",
+    "GET_SHOWTIMES",
+    "LEARN_MORE",
+    "LISTEN_NOW",
+    "ORDER_NOW",
+    "PLAY_GAME",
+    "REQUEST_TIME",
+    "SHOP_NOW",
+    "SIGN_UP"
+  ]
+}

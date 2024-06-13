@@ -34,7 +34,8 @@ import countries from "@/constants/countries.json";
 import languages from "@/constants/languages.json";
 import axios from "axios";
 import conf from "@/config";
-import { useToast } from "../ui/use-toast";
+// import { useToast } from "../ui/use-toast";
+import { toast } from "sonner";
 
 const OfferForm = () => {
   const formSchema = z.object({
@@ -55,7 +56,6 @@ const OfferForm = () => {
     offerName: z.string().optional(),
   });
 
-  const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -68,9 +68,7 @@ const OfferForm = () => {
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    toast({
-      title: "Creating Offer...",
-    });
+    toast("Creating Offer...");
     try {
       const response = await axios.post(
         `${conf.API_URL}/offers/createOffer`,
@@ -86,23 +84,17 @@ const OfferForm = () => {
 
       if (response.status === 200) {
         form.reset();
-        toast({
-          variant: "success",
-          title: "Offer Created Successfully",
+        toast.success("Offer Created Successfully", {
           description: `Offer Name: ${response.data.data.offerName}`,
         });
       } else {
-        toast({
-          variant: "destructive",
-          title: "Failed to create Offer",
+        toast.error("Failed to create Offer", {
           description: response.data.error.message || "Something went wrong",
         });
       }
       console.log(response);
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Failed to create Offer",
+      toast.error("Failed to create Offer", {
         description: error.message || "Something went wrong",
       });
     }

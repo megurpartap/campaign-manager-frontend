@@ -24,3 +24,18 @@ export const fbLogout = () => {
     });
   });
 };
+
+export const getFbLocales = (q: string) => {
+  return new Promise((resolve) => {
+    window.FB.api(
+      "/search",
+      {
+        type: "adlocale",
+        q: q,
+      },
+      (response) => {
+        resolve(response);
+      }
+    );
+  });
+};

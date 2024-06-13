@@ -3,12 +3,12 @@ import Sidebar from "../sidebar/Sidebar";
 import { useEffect } from "react";
 import axios from "axios";
 import conf from "@/config";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
   useEffect(() => {
+    console.log("Checking user status");
     const rt = localStorage.getItem("exampleRefreshToken");
     if (rt && rt !== String(null)) {
       axios
@@ -19,18 +19,18 @@ const DashboardLayout = () => {
         })
         .then((response) => {
           if (!response.data.success) {
-            toast({
-              variant: "destructive",
-              title: "Session Expired",
-              description: "Please login again",
-            });
-            navigate("/");
           }
+        })
+        .catch((err) => {
+          console.log(err);
+          toast.error("Session Expired", {
+            description: "Please login again",
+          });
+          navigate("/");
         });
     } else {
-      toast({
-        variant: "destructive",
-        title: "Session Expired",
+      console.log("Not a valid user");
+      toast.error("Session Expired", {
         description: "Please login again",
       });
       navigate("/");
