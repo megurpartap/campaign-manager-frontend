@@ -801,6 +801,7 @@ const CampaignForm = () => {
                           >
                             <FormControl>
                               <Checkbox
+                                // @ts-ignore
                                 checked={field.value?.includes(item.id)}
                                 onCheckedChange={(checked) => {
                                   console.log(field.value);

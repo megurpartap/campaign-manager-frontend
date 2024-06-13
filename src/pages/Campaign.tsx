@@ -50,9 +50,7 @@ async function getCampaignData(
 }
 
 const Campaign = () => {
-  const [currentAdAccount, setCurrentAdAccount] = useState<string>(
-    "act_831241675228825"
-  );
+  const [currentAdAccount] = useState<string>("act_831241675228825");
   const [data, setData] = useState<CampaignType[]>([]);
   useEffect(() => {
     getCampaignData(currentAdAccount).then((responseData) => {
