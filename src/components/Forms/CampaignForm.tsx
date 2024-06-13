@@ -961,6 +961,7 @@ const CampaignForm = () => {
                         type="file"
                         multiple={watchDynamicCreative}
                         placeholder="shadcn"
+                        accept="image/*"
                         {...fileRef}
                       />
                     </FormControl>

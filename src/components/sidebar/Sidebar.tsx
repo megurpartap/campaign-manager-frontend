@@ -12,8 +12,8 @@ import { Button } from "../ui/button";
 
 const Sidebar = () => {
   return (
-    <aside className="hidden border-r md:block">
-      <div className="flex h-full max-h-screen flex-col gap-2">
+    <aside className="hidden border-r md:block ">
+      <div className="flex h-full max-h-screen flex-col gap-2 fixed">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
           <NavLink to="/" className="flex items-center gap-2 font-semibold">
             <Package2 className="h-6 w-6" />
