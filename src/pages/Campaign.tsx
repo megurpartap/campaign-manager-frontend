@@ -18,6 +18,13 @@ import { useEffect, useState } from "react";
 import conf from "@/config";
 import axios from "axios";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 async function getCampaignData(
   adAccountId: string
@@ -50,17 +57,57 @@ async function getCampaignData(
 }
 
 const Campaign = () => {
-  const [currentAdAccount] = useState<string>("act_831241675228825");
+  const [currentAdAccount, setCurrentAdAccount] = useState<string>("");
+  const [adAccounts, setAdAccounts] = useState([]);
   const [data, setData] = useState<CampaignType[]>([]);
+
   useEffect(() => {
+    async function fetchAdAccounts() {
+      try {
+        const response = await axios.get(`${conf.API_URL}/fb/getAdAccounts`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              "exampleRefreshToken"
+            )}`,
+          },
+        });
+        setAdAccounts(response.data.data.data);
+        setCurrentAdAccount(response.data.data.data[0].id);
+      } catch (error: any) {
+        console.error(error.message);
+      }
+    }
+    fetchAdAccounts();
+  }, []);
+
+  useEffect(() => {
+    if (!currentAdAccount) return;
     getCampaignData(currentAdAccount).then((responseData) => {
       setData(responseData.data);
     });
-  }, []);
+  }, [currentAdAccount]);
   return (
     <>
       <Topbar currentPage="campaign" />
-      <div className="justify-end flex mt-3">
+      <div className="justify-between flex mt-3 px-8">
+        <div className="flex items-center gap-2">
+          <Select onValueChange={(e) => setCurrentAdAccount(e)}>
+            <SelectTrigger className="w-[400px]">
+              <SelectValue placeholder="Select An Ad Account" />
+            </SelectTrigger>
+            <SelectContent className="max-h-96">
+              {adAccounts &&
+                adAccounts.map((adAccount: any) => (
+                  <SelectItem key={adAccount.id} value={adAccount.id}>
+                    {adAccount.name}
+                    <span className="text-sm text-gray-400 ml-3">
+                      ({adAccount.id.slice(4)})
+                    </span>
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
