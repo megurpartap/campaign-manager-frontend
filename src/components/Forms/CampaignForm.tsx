@@ -31,8 +31,6 @@ import { Switch } from "../ui/switch";
 import { InputTags } from "../ui/inputTags";
 import MultipleSelector from "../ui/multipleSelector";
 import { useGetAdAccounts } from "@/hooks/useGetAdAccounts";
-import { set } from "date-fns";
-import { current } from "@reduxjs/toolkit";
 
 interface adAccountType {
   id: string;
@@ -68,12 +66,7 @@ const CampaignForm = () => {
   const [isCurrentOfferEU, setIsCurrentOfferEU] = useState(false);
   const [campaignResponse] = useState<campaignResponseObject>({});
 
-  const {
-    data: adAccounts,
-    isLoading: adAccountsLoading,
-    isError: adAccountsError,
-    isSuccess: adAccountsSuccess,
-  } = useGetAdAccounts();
+  const { data: adAccounts, isError: adAccountsError } = useGetAdAccounts();
 
   if (adAccountsError) {
     toast.error("Failed to fetch ad accounts");

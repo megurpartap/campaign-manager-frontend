@@ -9,9 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ListFilter } from "lucide-react";
-import { OfferType, columns } from "@/components/Tables/OfferTable/Columns";
+import { columns } from "@/components/Tables/OfferTable/Columns";
 import { OfferDataTable } from "@/components/Tables/OfferTable/OfferDataTable";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useGetOffers } from "@/hooks/useGetOffers";
 

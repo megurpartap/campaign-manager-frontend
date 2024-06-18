@@ -1,9 +1,6 @@
 import Topbar from "@/components/layout/Topbar";
 import { CampaignDataTable } from "@/components/Tables/CampaignTable/CampaignDataTable";
-import {
-  CampaignType,
-  columns,
-} from "@/components/Tables/CampaignTable/Columns";
+import { columns } from "@/components/Tables/CampaignTable/Columns";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,9 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ListFilter } from "lucide-react";
-import { useEffect, useState } from "react";
-import conf from "@/config";
-import axios from "axios";
+import { useEffect } from "react";
 import { toast } from "sonner";
 import {
   Select,
@@ -30,43 +25,12 @@ import { useGetCampaigns } from "@/hooks/useGetCampaigns";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentAdAccount } from "@/components/store/features/campaigns/campaignSlice";
 
-async function getCampaignData(
-  adAccountId: string
-): Promise<{ data: CampaignType[] }> {
-  try {
-    const response = await axios.get(
-      `${conf.API_URL}/fb/getFbCampaigns?adAccountId=${adAccountId}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem(
-            "exampleRefreshToken"
-          )}`,
-        },
-      }
-    );
-    if (response.status !== 200) {
-      throw new Error("Failed to fetch data");
-    }
-    return response.data.data;
-  } catch (error: any) {
-    const errorMessage = error.response?.data?.message || error.message;
-    toast.error("Failed to fetch data", {
-      description: errorMessage || "",
-    });
-    return {
-      data: [],
-    };
-  }
-}
-
 const Campaign = () => {
   const dispatch = useDispatch();
   const currentAdAccount = useSelector((state: any) => state.currentAdAccount);
 
   const {
     data: adAccounts,
-    isLoading: adAccountsLoading,
     isError: adAccountsError,
     isSuccess: adAccountsSuccess,
   } = useGetAdAccounts();
