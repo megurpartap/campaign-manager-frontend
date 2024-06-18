@@ -30,7 +30,6 @@ export function CampaignDataTable<TData, TValue>({
     // getPaginationRowModel: getPaginationRowModel(),
     // rowCount: data.length,
   });
-  console.log(data.length);
 
   return (
     <div>

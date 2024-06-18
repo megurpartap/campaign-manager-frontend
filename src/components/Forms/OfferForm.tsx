@@ -63,7 +63,7 @@ const OfferForm = () => {
       offerType: "DIRECT",
       country: "",
       languages: "",
-      offerName: undefined,
+      offerName: "",
     },
   });
 

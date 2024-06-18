@@ -30,6 +30,9 @@ import { Checkbox } from "../ui/checkbox";
 import { Switch } from "../ui/switch";
 import { InputTags } from "../ui/inputTags";
 import MultipleSelector from "../ui/multipleSelector";
+import { useGetAdAccounts } from "@/hooks/useGetAdAccounts";
+import { set } from "date-fns";
+import { current } from "@reduxjs/toolkit";
 
 interface adAccountType {
   id: string;
@@ -44,6 +47,7 @@ interface pageType {
 interface offerType {
   id: string;
   offerName: string;
+  isEU: boolean;
 }
 
 interface campaignResponseObject {
@@ -59,29 +63,21 @@ const callToActionEnum = callToActionTypes.types as [string, ...string[]];
 
 const CampaignForm = () => {
   // const { toast } = useToast();
-  const [adAccounts, setAdAccounts] = useState([]);
   const [pages, setPages] = useState([]);
   const [offers, setOffers] = useState([]);
+  const [isCurrentOfferEU, setIsCurrentOfferEU] = useState(false);
   const [campaignResponse] = useState<campaignResponseObject>({});
 
-  useEffect(() => {
-    async function fetchAdAccounts() {
-      try {
-        const response = await axios.get(`${conf.API_URL}/fb/getAdAccounts`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(
-              "exampleRefreshToken"
-            )}`,
-          },
-        });
-        setAdAccounts(response.data.data.data);
-      } catch (error: any) {
-        alert("Failed to fetch Ad Accounts. Please try again later.");
-        console.error(error.message);
-      }
-    }
-    fetchAdAccounts();
-  }, []);
+  const {
+    data: adAccounts,
+    isLoading: adAccountsLoading,
+    isError: adAccountsError,
+    isSuccess: adAccountsSuccess,
+  } = useGetAdAccounts();
+
+  if (adAccountsError) {
+    toast.error("Failed to fetch ad accounts");
+  }
 
   useEffect(() => {
     async function getPages() {
@@ -195,16 +191,27 @@ const CampaignForm = () => {
       adHeadline: z.string().optional(),
       multipleAdHeadline: z.array(z.string()),
       adDescription: z.string().optional(),
-      multipleAdDescription: z.array(z.string()),
+      multipleAdDescription: z.array(z.string()).optional(),
       callToAction: z.enum(callToActionEnum),
       multipleCallToAction: z.array(optionSchema),
       pixelId: z.string().optional(),
       isDynamicCreative: z.boolean(),
+      beneficiaryName: z.string().optional(),
     })
     .refine((data) => data.adImage?.length > 0, {
       message: "File is required.",
       path: ["adImage"],
-    });
+    })
+    .refine(
+      (data) =>
+        (isCurrentOfferEU && data.beneficiaryName) ||
+        (!isCurrentOfferEU && !data.beneficiaryName),
+      {
+        message:
+          "Beneficiary Name is required as the offer's country belong to EU.",
+        path: ["beneficiaryName"],
+      }
+    );
 
   // const { toast } = useToast();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -231,8 +238,15 @@ const CampaignForm = () => {
       multipleAdHeadline: [],
       multipleAdDescription: [],
       multipleCallToAction: [],
+      beneficiaryName: undefined,
     },
   });
+
+  useEffect(() => {
+    if (!isCurrentOfferEU) {
+      form.setValue("beneficiaryName", undefined);
+    }
+  }, [isCurrentOfferEU]);
 
   const watchCampaignObjective = form.watch("campaignObjective");
   const watchDynamicCreative = form.watch("isDynamicCreative");
@@ -311,21 +325,19 @@ const CampaignForm = () => {
         });
         return;
       }
-      if (
-        !data.adPrimaryText ||
-        !data.adHeadline ||
-        !data.adDescription ||
-        !data.callToAction
-      ) {
+      if (!data.adPrimaryText) {
         form.setError("adPrimaryText", {
           message: "Primary Text is required",
         });
+        return;
+      }
+      if (!data.adHeadline) {
         form.setError("adHeadline", {
           message: "Headline is required",
         });
-        form.setError("adDescription", {
-          message: "Description is required",
-        });
+        return;
+      }
+      if (!data.callToAction) {
         form.setError("callToAction", {
           message: "Call to Action is required",
         });
@@ -368,6 +380,7 @@ const CampaignForm = () => {
             offerId: data.offerId,
             pageId: data.pageId,
             pixelId: data.pixelId,
+            beneficiaryName: data.beneficiaryName,
             isDynamicCreative: watchDynamicCreative,
             campaignId: campaignResponse.campaignId,
           },
@@ -479,8 +492,7 @@ const CampaignForm = () => {
       }
       if (
         data.multipleAdPrimaryText.length == 0 ||
-        data.multipleAdHeadline.length == 0 ||
-        data.multipleAdDescription.length == 0
+        data.multipleAdHeadline.length == 0
       ) {
         form.setError("isDynamicCreative", {
           message:
@@ -522,6 +534,7 @@ const CampaignForm = () => {
             adSetStatus: data.adSetStatus,
             billingEvent: data.billingEvent,
             bidAmount: data.bidAmount,
+            beneficiaryName: data.beneficiaryName,
             offerId: data.offerId,
             pageId: data.pageId,
             pixelId: data.pixelId,
@@ -657,11 +670,12 @@ const CampaignForm = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {adAccounts.map((adAccount: adAccountType) => (
-                        <SelectItem key={adAccount.id} value={adAccount.id}>
-                          {adAccount.name}
-                        </SelectItem>
-                      ))}
+                      {adAccounts &&
+                        adAccounts.map((adAccount: adAccountType) => (
+                          <SelectItem key={adAccount.id} value={adAccount.id}>
+                            {adAccount.name}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -712,7 +726,11 @@ const CampaignForm = () => {
                     <span className="text-destructive"> *</span>
                   </FormLabel>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={(e) => {
+                      const offerParam = e.split("__");
+                      setIsCurrentOfferEU(offerParam[1] === "true");
+                      field.onChange(offerParam[0]);
+                    }}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -722,7 +740,10 @@ const CampaignForm = () => {
                     </FormControl>
                     <SelectContent>
                       {offers.map((offer: offerType) => (
-                        <SelectItem key={offer.id} value={offer.id}>
+                        <SelectItem
+                          key={offer.id}
+                          value={`${offer.id}__${offer.isEU}`}
+                        >
                           {offer.offerName}
                         </SelectItem>
                       ))}
@@ -841,6 +862,27 @@ const CampaignForm = () => {
                 </FormItem>
               )}
             />
+
+            {/* Beneficiary Name */}
+            {isCurrentOfferEU && (
+              <FormField
+                control={form.control}
+                name="beneficiaryName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Beneficiary & Payer Name
+                      <span className="text-destructive"> *</span>
+                    </FormLabel>
+                    <Input
+                      {...field}
+                      placeholder="Name of the Beneficiary and Payer"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             {/* Daily Budget */}
             <FormField
@@ -1108,10 +1150,7 @@ const CampaignForm = () => {
                 name="adDescription"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      Ad Description
-                      <span className="text-destructive"> *</span>
-                    </FormLabel>
+                    <FormLabel>Ad Description</FormLabel>
                     <Input {...field} />
                     <FormMessage />
                   </FormItem>
@@ -1128,7 +1167,7 @@ const CampaignForm = () => {
                   <FormItem>
                     <FormLabel>Multiple Ad Description(s)</FormLabel>
                     <FormControl>
-                      <InputTags {...field} />
+                      <InputTags {...field} value={field.value || []} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

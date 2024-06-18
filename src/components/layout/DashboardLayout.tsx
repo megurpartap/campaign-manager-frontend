@@ -8,7 +8,6 @@ import { toast } from "sonner";
 const DashboardLayout = () => {
   const navigate = useNavigate();
   useEffect(() => {
-    console.log("Checking user status");
     const rt = localStorage.getItem("exampleRefreshToken");
     if (rt && rt !== String(null)) {
       axios

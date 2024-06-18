@@ -25,6 +25,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useGetAdAccounts } from "@/hooks/useGetAdAccounts";
+import { useGetCampaigns } from "@/hooks/useGetCampaigns";
+import { useDispatch, useSelector } from "react-redux";
+import { setCurrentAdAccount } from "@/components/store/features/campaigns/campaignSlice";
 
 async function getCampaignData(
   adAccountId: string
@@ -57,41 +61,47 @@ async function getCampaignData(
 }
 
 const Campaign = () => {
-  const [currentAdAccount, setCurrentAdAccount] = useState<string>("");
-  const [adAccounts, setAdAccounts] = useState([]);
-  const [data, setData] = useState<CampaignType[]>([]);
+  const dispatch = useDispatch();
+  const currentAdAccount = useSelector((state: any) => state.currentAdAccount);
+
+  const {
+    data: adAccounts,
+    isLoading: adAccountsLoading,
+    isError: adAccountsError,
+    isSuccess: adAccountsSuccess,
+  } = useGetAdAccounts();
 
   useEffect(() => {
-    async function fetchAdAccounts() {
-      try {
-        const response = await axios.get(`${conf.API_URL}/fb/getAdAccounts`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(
-              "exampleRefreshToken"
-            )}`,
-          },
-        });
-        setAdAccounts(response.data.data.data);
-        setCurrentAdAccount(response.data.data.data[0].id);
-      } catch (error: any) {
-        console.error(error.message);
-      }
+    if (adAccountsSuccess && !currentAdAccount && adAccounts.length > 0) {
+      dispatch(setCurrentAdAccount(adAccounts[0].id));
     }
-    fetchAdAccounts();
-  }, []);
+  }, [adAccountsSuccess, adAccounts, currentAdAccount, dispatch]);
+  // if (adAccountsSuccess && !currentAdAccount && adAccounts.length > 0) {
+  //   dispatch(setCurrentAdAccount(adAccounts[0].id));
+  // }
+  if (adAccountsError) {
+    toast.error("Failed to fetch ad accounts");
+  }
 
-  useEffect(() => {
-    if (!currentAdAccount) return;
-    getCampaignData(currentAdAccount).then((responseData) => {
-      setData(responseData.data);
-    });
-  }, [currentAdAccount]);
+  const {
+    data: campaigns,
+    isLoading: campaignsLoading,
+    isError: campaignsError,
+  } = useGetCampaigns(currentAdAccount);
+
+  if (campaignsError) {
+    toast.error("Failed to fetch campaigns");
+  }
+
   return (
     <>
       <Topbar currentPage="campaign" />
       <div className="justify-between flex mt-3 px-8">
         <div className="flex items-center gap-2">
-          <Select onValueChange={(e) => setCurrentAdAccount(e)}>
+          <Select
+            value={currentAdAccount}
+            onValueChange={(e) => dispatch(setCurrentAdAccount(e))}
+          >
             <SelectTrigger className="w-[400px]">
               <SelectValue placeholder="Select An Ad Account" />
             </SelectTrigger>
@@ -131,7 +141,10 @@ const Campaign = () => {
         </div>
       </div>
       <div className="container mx-auto pt-5">
-        <CampaignDataTable columns={columns} data={data} />
+        {(campaignsLoading || !currentAdAccount) && <p>Loading...</p>}
+        {!campaignsLoading && currentAdAccount && (
+          <CampaignDataTable columns={columns} data={campaigns || []} />
+        )}
       </div>
     </>
   );

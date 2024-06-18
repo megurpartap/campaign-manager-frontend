@@ -32,10 +32,9 @@ export function OfferDataTable<TData, TValue>({
     getPaginationRowModel: getPaginationRowModel(),
     rowCount: data.length,
   });
-  console.log(data.length);
 
   return (
-    <div>
+    <div className="flex-column justify-between">
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -98,7 +97,7 @@ export function OfferDataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+          onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
           Next

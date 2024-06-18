@@ -12,38 +12,20 @@ import { ListFilter } from "lucide-react";
 import { OfferType, columns } from "@/components/Tables/OfferTable/Columns";
 import { OfferDataTable } from "@/components/Tables/OfferTable/OfferDataTable";
 import { useEffect, useState } from "react";
-import conf from "@/config";
-import axios from "axios";
 import { toast } from "sonner";
-
-async function getOfferData(): Promise<OfferType[]> {
-  try {
-    const response = await axios.get(`${conf.API_URL}/offers/getOffers`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("exampleRefreshToken")}`,
-      },
-    });
-    if (response.status !== 200) {
-      throw new Error("Failed to fetch data");
-    }
-    return response.data.data;
-  } catch (error: any) {
-    const errorMessage = error.response?.data?.message || error.message;
-    toast.error("Failed to fetch data", {
-      description: errorMessage || "",
-    });
-    return [];
-  }
-}
+import { useGetOffers } from "@/hooks/useGetOffers";
 
 const Offer = () => {
-  const [data, setData] = useState<OfferType[]>([]);
-  useEffect(() => {
-    getOfferData().then((data) => {
-      setData(data);
-    });
-  }, []);
+  const {
+    data: offers,
+    isLoading: offersLoading,
+    isError: offersError,
+  } = useGetOffers();
+
+  if (offersError) {
+    toast.error("Failed to fetch offers");
+  }
+
   return (
     <>
       <Topbar currentPage="offer" />
@@ -71,7 +53,10 @@ const Offer = () => {
         </div>
       </div>
       <div className="container mx-auto pt-5">
-        <OfferDataTable columns={columns} data={data} />
+        {offersLoading && <p>Loading...</p>}
+        {!offersLoading && (
+          <OfferDataTable columns={columns} data={offers || []} />
+        )}
       </div>
     </>
   );
