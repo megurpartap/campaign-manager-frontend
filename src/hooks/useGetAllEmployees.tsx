@@ -2,17 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import conf from "@/config";
 
-interface AdAccount {
-  adAccountId: string;
-  adAccountName: string;
-}
+type EmployeeType = {
+  id: string;
+  username: string;
+  fullName: string;
+};
 
-export const useGetAdAccounts = () => {
+export const useGetAllEmployees = () => {
   return useQuery({
-    queryKey: ["adAccounts"],
+    queryKey: ["allEmployees"],
     queryFn: async () => {
       const response = await axios.get(
-        `${conf.API_URL}/employees/getEmployeeAdAccounts`,
+        `${conf.API_URL}/employees/getAllEmployees`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
@@ -21,8 +22,7 @@ export const useGetAdAccounts = () => {
           },
         }
       );
-      console.log(response.data.data);
-      return response.data.data as AdAccount[];
+      return response.data.data as EmployeeType[];
     },
     staleTime: 1000 * 60 * 3,
   });

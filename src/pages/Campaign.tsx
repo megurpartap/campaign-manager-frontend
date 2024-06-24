@@ -11,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ListFilter } from "lucide-react";
-import { useEffect } from "react";
 import { toast } from "sonner";
 import {
   Select,
@@ -23,11 +22,13 @@ import {
 import { useGetAdAccounts } from "@/hooks/useGetAdAccounts";
 import { useGetCampaigns } from "@/hooks/useGetCampaigns";
 import { useDispatch, useSelector } from "react-redux";
-import { setCurrentAdAccount } from "@/components/store/features/campaigns/campaignSlice";
+import { setCurrentAdAccount } from "@/store/features/campaigns/campaignSlice";
 
 const Campaign = () => {
   const dispatch = useDispatch();
-  const currentAdAccount = useSelector((state: any) => state.currentAdAccount);
+  const currentAdAccount = useSelector(
+    (state: any) => state.campaign.currentAdAccount
+  );
 
   const {
     data: adAccounts,
@@ -35,14 +36,9 @@ const Campaign = () => {
     isSuccess: adAccountsSuccess,
   } = useGetAdAccounts();
 
-  useEffect(() => {
-    if (adAccountsSuccess && !currentAdAccount && adAccounts.length > 0) {
-      dispatch(setCurrentAdAccount(adAccounts[0].id));
-    }
-  }, [adAccountsSuccess, adAccounts, currentAdAccount, dispatch]);
-  // if (adAccountsSuccess && !currentAdAccount && adAccounts.length > 0) {
-  //   dispatch(setCurrentAdAccount(adAccounts[0].id));
-  // }
+  if (adAccountsSuccess && adAccounts.length > 0 && !currentAdAccount) {
+    dispatch(setCurrentAdAccount(adAccounts[0].adAccountId));
+  }
   if (adAccountsError) {
     toast.error("Failed to fetch ad accounts");
   }
@@ -51,6 +47,7 @@ const Campaign = () => {
     data: campaigns,
     isLoading: campaignsLoading,
     isError: campaignsError,
+    isSuccess: campaignsSuccess,
   } = useGetCampaigns(currentAdAccount);
 
   if (campaignsError) {
@@ -70,15 +67,24 @@ const Campaign = () => {
               <SelectValue placeholder="Select An Ad Account" />
             </SelectTrigger>
             <SelectContent className="max-h-96">
-              {adAccounts &&
+              {adAccountsSuccess &&
+                adAccounts.length > 0 &&
                 adAccounts.map((adAccount: any) => (
-                  <SelectItem key={adAccount.id} value={adAccount.id}>
-                    {adAccount.name}
+                  <SelectItem
+                    key={adAccount.adAccountId}
+                    value={adAccount.adAccountId}
+                  >
+                    {adAccount.adAccountName}
                     <span className="text-sm text-gray-400 ml-3">
-                      ({adAccount.id.slice(4)})
+                      ({adAccount.adAccountId.slice(4)})
                     </span>
                   </SelectItem>
                 ))}
+              {adAccountsSuccess && adAccounts.length === 0 && (
+                <SelectItem value="no ad account" disabled={true}>
+                  No ad accounts found
+                </SelectItem>
+              )}
             </SelectContent>
           </Select>
         </div>
@@ -105,8 +111,11 @@ const Campaign = () => {
         </div>
       </div>
       <div className="container mx-auto pt-5">
-        {(campaignsLoading || !currentAdAccount) && <p>Loading...</p>}
-        {!campaignsLoading && currentAdAccount && (
+        {currentAdAccount && campaignsLoading && <p>Loading...</p>}
+        {adAccountsSuccess && adAccounts.length === 0 && (
+          <p>No Ad Accounts Found</p>
+        )}
+        {currentAdAccount && campaignsSuccess && (
           <CampaignDataTable columns={columns} data={campaigns || []} />
         )}
       </div>

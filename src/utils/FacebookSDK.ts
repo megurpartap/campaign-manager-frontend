@@ -12,7 +12,7 @@ export const fbLogin = () => {
       (response) => {
         resolve(response);
       },
-      { config_id: "703228478688597" }
+      { config_id: "317113771370256" }
     );
   });
 };

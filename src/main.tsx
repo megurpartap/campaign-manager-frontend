@@ -7,8 +7,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // import { Toaster } from "./components/ui/toaster.tsx";
 import { Toaster } from "./components/ui/sonner.tsx";
 import { Provider } from "react-redux";
-import { store } from "./components/store/store.ts";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { store } from "@/store/store.ts";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient();
 
@@ -23,7 +23,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           expand={true}
           theme="light"
         />
-        <ReactQueryDevtools initialIsOpen={false} />
+        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       </QueryClientProvider>
     </Provider>
   </React.StrictMode>

@@ -31,22 +31,8 @@ import { Switch } from "../ui/switch";
 import { InputTags } from "../ui/inputTags";
 import MultipleSelector from "../ui/multipleSelector";
 import { useGetAdAccounts } from "@/hooks/useGetAdAccounts";
-
-interface adAccountType {
-  id: string;
-  name: string;
-}
-
-interface pageType {
-  id: string;
-  name: string;
-}
-
-interface offerType {
-  id: string;
-  offerName: string;
-  isEU: boolean;
-}
+import { useGetPages } from "@/hooks/useGetPages";
+import { useGetOfferNames } from "@/hooks/useGetOfferNames";
 
 interface campaignResponseObject {
   campaignId?: string;
@@ -60,58 +46,38 @@ interface campaignResponseObject {
 const callToActionEnum = callToActionTypes.types as [string, ...string[]];
 
 const CampaignForm = () => {
-  // const { toast } = useToast();
-  const [pages, setPages] = useState([]);
-  const [offers, setOffers] = useState([]);
   const [isCurrentOfferEU, setIsCurrentOfferEU] = useState(false);
   const [campaignResponse] = useState<campaignResponseObject>({});
 
-  const { data: adAccounts, isError: adAccountsError } = useGetAdAccounts();
+  const {
+    data: adAccounts,
+    isError: adAccountsError,
+    isSuccess: adAccountsSuccess,
+  } = useGetAdAccounts();
 
   if (adAccountsError) {
     toast.error("Failed to fetch ad accounts");
   }
 
-  useEffect(() => {
-    async function getPages() {
-      try {
-        const response = await axios.get(`${conf.API_URL}/fb/getFbPages`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(
-              "exampleRefreshToken"
-            )}`,
-          },
-        });
-        setPages(response.data.data.data);
-      } catch (error: any) {
-        alert("Failed to fetch Pages. Please try again later.");
-        console.error(error.message);
-      }
-    }
-    getPages();
-  }, []);
+  const {
+    data: pages,
+    isError: pagesError,
+    isSuccess: pagesSuccess,
+  } = useGetPages();
 
-  useEffect(() => {
-    async function getOffers() {
-      try {
-        const response = await axios.get(
-          `${conf.API_URL}/offers/getOfferNames`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem(
-                "exampleRefreshToken"
-              )}`,
-            },
-          }
-        );
-        setOffers(response.data.data);
-      } catch (error: any) {
-        alert("Failed to fetch Offers. Please try again later.");
-        console.error(error.message);
-      }
-    }
-    getOffers();
-  }, []);
+  if (pagesError) {
+    toast.error("Failed to fetch pages");
+  }
+
+  const {
+    data: offersData,
+    isSuccess: offersSuccess,
+    isError: offersError,
+  } = useGetOfferNames();
+
+  if (offersError) {
+    toast.error("Failed to fetch offers");
+  }
 
   const optionSchema = z.object({
     label: z.string(),
@@ -276,13 +242,20 @@ const CampaignForm = () => {
   //   }
   // }
 
-  async function getMultipleImageHash(uploadedFiles: FileList | null) {
+  async function getMultipleImageHash({
+    uploadedFiles,
+    adAccountId,
+  }: {
+    uploadedFiles: FileList | null;
+    adAccountId: string;
+  }) {
     console.log(uploadedFiles);
     if (!uploadedFiles || uploadedFiles.length == 0) {
       toast.error("No file selected");
       return;
     }
     const formData = new FormData();
+    formData.append("adAccountId", adAccountId);
     for (let i = 0; i < uploadedFiles.length; i++) {
       formData.append(`adImages`, uploadedFiles[i]);
     }
@@ -390,7 +363,10 @@ const CampaignForm = () => {
           campaignResponse.adSetId = adSetResponse.data.data.id;
           campaignResponse.adSetName = adSetResponse.data.data.name;
           toast("Uploading Image...");
-          const imageHash = await getMultipleImageHash(data.adImage);
+          const imageHash = await getMultipleImageHash({
+            uploadedFiles: data.adImage,
+            adAccountId: data.adAccountId,
+          });
           if (imageHash) {
             toast.success("Image Uploaded Successfully");
             campaignResponse.imageHash = imageHash;
@@ -467,7 +443,7 @@ const CampaignForm = () => {
       }
       console.log(response);
     } catch (error: any) {
-      toast.error("Failed to create Offer", {
+      toast.error("Failed to create Campaign", {
         description: error.message || "Something went wrong",
       });
     }
@@ -547,7 +523,10 @@ const CampaignForm = () => {
           campaignResponse.adSetId = adSetResponse.data.data.id;
           campaignResponse.adSetName = adSetResponse.data.data.name;
           toast("Uploading Image...");
-          const imageHash = await getMultipleImageHash(data.adImage);
+          const imageHash = await getMultipleImageHash({
+            uploadedFiles: data.adImage,
+            adAccountId: data.adAccountId,
+          });
           if (imageHash) {
             toast.success("Image Uploaded Successfully");
             campaignResponse.imageHash = imageHash;
@@ -663,12 +642,25 @@ const CampaignForm = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {adAccounts &&
-                        adAccounts.map((adAccount: adAccountType) => (
-                          <SelectItem key={adAccount.id} value={adAccount.id}>
-                            {adAccount.name}
+                      {adAccountsSuccess &&
+                        adAccounts.length > 0 &&
+                        adAccounts.map((adAccount) => (
+                          <SelectItem
+                            key={adAccount.adAccountId}
+                            value={adAccount.adAccountId}
+                          >
+                            {adAccount.adAccountName}
                           </SelectItem>
                         ))}
+                      {adAccountsSuccess && adAccounts.length == 0 && (
+                        <SelectItem
+                          value="No Ad Accounts Found"
+                          disabled={true}
+                        >
+                          No Ad Accounts Found in your account. Please contact
+                          your admin.
+                        </SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -696,11 +688,19 @@ const CampaignForm = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {pages.map((page: pageType) => (
-                        <SelectItem key={page.id} value={page.id}>
-                          {page.name}
+                      {pagesSuccess &&
+                        pages.length > 0 &&
+                        pages.map((page) => (
+                          <SelectItem key={page.pageId} value={page.pageId}>
+                            {page.pageName}
+                          </SelectItem>
+                        ))}
+                      {pagesSuccess && pages.length == 0 && (
+                        <SelectItem value="No Pages Found" disabled={true}>
+                          No Pages Found in your account. Please contact your
+                          admin.
                         </SelectItem>
-                      ))}
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -732,14 +732,23 @@ const CampaignForm = () => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {offers.map((offer: offerType) => (
-                        <SelectItem
-                          key={offer.id}
-                          value={`${offer.id}__${offer.isEU}`}
-                        >
-                          {offer.offerName}
+                      {offersSuccess &&
+                        offersData.length > 0 &&
+                        offersData.map((offer) => (
+                          <SelectItem
+                            key={offer.id}
+                            value={`${offer.id}__${offer.isEU}`}
+                          >
+                            <b>OF-{offer.offerSequenceId}</b>
+                            <span className="ml-3">{offer.offerName}</span>
+                          </SelectItem>
+                        ))}
+                      {offersSuccess && offersData.length == 0 && (
+                        <SelectItem value="No Offers Found" disabled={true}>
+                          No Offers Found in your account. Please contact your
+                          admin.
                         </SelectItem>
-                      ))}
+                      )}
                     </SelectContent>
                   </Select>
                   <FormMessage />

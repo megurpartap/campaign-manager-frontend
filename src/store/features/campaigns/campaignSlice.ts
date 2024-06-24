@@ -7,13 +7,18 @@ const initialState = {
 const campaignSlice = createSlice({
   name: "campaign",
   initialState,
+
   reducers: {
     setCurrentAdAccount: (state, action) => {
       state.currentAdAccount = action.payload;
     },
+    resetCurrentAdAccount: (state) => {
+      state.currentAdAccount = null;
+    },
   },
 });
 
-export const { setCurrentAdAccount } = campaignSlice.actions;
+export const { setCurrentAdAccount, resetCurrentAdAccount } =
+  campaignSlice.actions;
 
 export default campaignSlice.reducer;

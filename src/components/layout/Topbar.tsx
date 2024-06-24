@@ -23,37 +23,64 @@ const currentPageObject = {
     title: "Offer",
     description: "This Page is only visible to the admin.",
     formComponent: <OfferForm />,
-    refetch: ["offers"],
+    refetch: [["offers"]],
   },
   campaign: {
     title: "Campaign",
     description: "This Page is publicly visible",
     formComponent: <CampaignForm />,
-    refetch: ["campaigns"],
+    refetch: [["campaigns"], ["adAccounts"]],
   },
 };
 
 const Topbar = ({ currentPage }: TopbarProps) => {
   const queryClient = useQueryClient();
   const handleRefetch = async () => {
-    toast(`Refreshing ${currentPageObject[currentPage].title}s`);
-    queryClient
-      .refetchQueries(
-        {
-          queryKey: currentPageObject[currentPage].refetch,
-          type: "active",
-        },
-        {
-          throwOnError: true,
-        }
-      )
-      .then(() => {
-        toast.success(`${currentPageObject[currentPage].title}s Refreshed`);
+    await Promise.all(
+      currentPageObject[currentPage].refetch.map((key) => {
+        toast(`Refreshing ${key[0]}`);
+        return queryClient
+          .refetchQueries(
+            {
+              queryKey: key,
+              type: "active",
+            },
+            {
+              throwOnError: true,
+            }
+          )
+          .then(() => {
+            toast.success(`${key[0]} Refreshed`);
+          })
+          .catch((error) => {
+            console.log(error);
+            toast.error(`Cannot Refresh ${key[0]}`);
+          });
       })
-      .catch((error) => {
-        console.log(error);
-        toast.error(`Cannot Refresh ${currentPageObject[currentPage].title}s`);
-      });
+    ).catch((error) => {
+      console.log(error);
+      toast.error(
+        `Some Error Occures while refreshing ${currentPageObject[currentPage].title}s`
+      );
+    });
+
+    // queryClient
+    //   .refetchQueries(
+    //     {
+    //       queryKey: currentPageObject[currentPage].refetch,
+    //       type: "active",
+    //     },
+    //     {
+    //       throwOnError: true,
+    //     }
+    //   )
+    //   .then(() => {
+    //     toast.success(`${currentPageObject[currentPage].title}s Refreshed`);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //     toast.error(`Cannot Refresh ${currentPageObject[currentPage].title}s`);
+    //   });
   };
   return (
     <>

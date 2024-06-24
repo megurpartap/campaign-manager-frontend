@@ -10,6 +10,10 @@ export type OfferType = {
   languages: string;
   country: string;
   offerType: "DIRECT" | "ADVERTORIAL";
+  createdBy: {
+    id: string;
+    username: string;
+  };
 };
 
 export const columns: ColumnDef<OfferType>[] = [
@@ -53,5 +57,9 @@ export const columns: ColumnDef<OfferType>[] = [
   {
     accessorKey: "offerType",
     header: "Offer Type",
+  },
+  {
+    accessorFn: (row) => row.createdBy.username,
+    header: "Created By",
   },
 ];

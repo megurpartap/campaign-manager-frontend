@@ -11,7 +11,7 @@ const DashboardLayout = () => {
     const rt = localStorage.getItem("exampleRefreshToken");
     if (rt && rt !== String(null)) {
       axios
-        .get(`${conf.API_URL}/users/getLoginStatus`, {
+        .get(`${conf.API_URL}/users/getUserLoginStatus`, {
           headers: {
             Authorization: `Bearer ${rt}`,
           },

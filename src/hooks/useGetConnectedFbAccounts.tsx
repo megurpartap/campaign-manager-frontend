@@ -2,17 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import conf from "@/config";
 
-interface AdAccount {
-  adAccountId: string;
-  adAccountName: string;
+interface ConnectedFacebookAccount {
+  facebookId: string;
+  fbFullName: string;
+  id: string;
 }
 
-export const useGetAdAccounts = () => {
+export const useGetAdminConnectedFbAccounts = () => {
   return useQuery({
-    queryKey: ["adAccounts"],
+    queryKey: ["connectedFacebookAccount"],
     queryFn: async () => {
       const response = await axios.get(
-        `${conf.API_URL}/employees/getEmployeeAdAccounts`,
+        `${conf.API_URL}/admins/getAdminConnectedFbAccounts`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem(
@@ -22,7 +23,7 @@ export const useGetAdAccounts = () => {
         }
       );
       console.log(response.data.data);
-      return response.data.data as AdAccount[];
+      return response.data.data as ConnectedFacebookAccount[];
     },
     staleTime: 1000 * 60 * 3,
   });
