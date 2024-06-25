@@ -5,12 +5,13 @@ import axios from "axios";
 import conf from "@/config";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
-import { resetUserData } from "@/store/features/user/userSlice";
+import { resetUserData, setUserData } from "@/store/features/user/userSlice";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
+    console.log("Checking user login status");
     const rt = localStorage.getItem("exampleRefreshToken");
     if (rt && rt !== String(null)) {
       axios
@@ -20,7 +21,8 @@ const DashboardLayout = () => {
           },
         })
         .then((response) => {
-          if (!response.data.success) {
+          if (response.data.success) {
+            dispatch(setUserData(response.data.data.user));
           }
         })
         .catch((err) => {
