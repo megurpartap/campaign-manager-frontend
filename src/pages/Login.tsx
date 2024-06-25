@@ -2,7 +2,7 @@ import { useEffect } from "react";
 // import { fbLogin } from "@/utils/FacebookSDK";
 import axios from "axios";
 import conf from "@/config/index.js";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import SignInForm from "@/components/Forms/SignInForm";
 import { useDispatch } from "react-redux";
@@ -84,6 +84,13 @@ function Login() {
         Arb Drive
       </h1>
       <SignInForm />
+      {/* copyright footer */}
+      <div className="absolute bottom-0 w-full text-center pb-2 text-muted-foreground">
+        <span className="text-sm text-muted-foreground">
+          © 2024 Arb Drive |{" "}
+          <NavLink to="/privacy-policy">Privacy Policy</NavLink>
+        </span>
+      </div>
     </div>
   );
 }

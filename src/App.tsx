@@ -7,6 +7,7 @@ import DashboardLayout from "./components/layout/DashboardLayout";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
 import User from "./pages/User";
+import PrivacyPolicy from "./pages/Terms pages/PrivacyPolicy";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
               <Route path="settings" element={<Settings />} />
               <Route path="user" element={<User />} />
             </Route>
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           </Routes>
         </BrowserRouter>
       </div>
