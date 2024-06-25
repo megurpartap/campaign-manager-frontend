@@ -40,11 +40,11 @@ import { toast } from "sonner";
 const OfferForm = () => {
   const formSchema = z.object({
     offerURL: z
-      .string({ required_error: "offerURL is Required" })
+      .string({ required_error: "Product Url is Required" })
       .url({ message: "Invalid URL" }),
     offerType: z
       .enum(["DIRECT", "ADVERTORIAL"], {
-        message: "Invalid offer type",
+        message: "Invalid Product type",
       })
       .default("DIRECT"),
     country: z
@@ -68,7 +68,7 @@ const OfferForm = () => {
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    toast("Creating Offer...");
+    toast("Creating Product...");
     try {
       const response = await axios.post(
         `${conf.API_URL}/offers/createOffer`,
@@ -84,17 +84,17 @@ const OfferForm = () => {
 
       if (response.status === 200) {
         form.reset();
-        toast.success("Offer Created Successfully", {
-          description: `Offer Name: ${response.data.data.offerName}`,
+        toast.success("Product Created Successfully", {
+          description: `Product Name: ${response.data.data.offerName}`,
         });
       } else {
-        toast.error("Failed to create Offer", {
+        toast.error("Failed to create Product", {
           description: response.data.error.message || "Something went wrong",
         });
       }
       console.log(response);
     } catch (error: any) {
-      toast.error("Failed to create Offer", {
+      toast.error("Failed to create Product", {
         description: error.message || "Something went wrong",
       });
     }
@@ -103,7 +103,7 @@ const OfferForm = () => {
   return (
     <Card className="mt-8 w-96 mx-auto ">
       <CardHeader>
-        <CardTitle>Add Offer</CardTitle>
+        <CardTitle>Add Product</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -115,7 +115,7 @@ const OfferForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Offer URL<span className="text-destructive"> *</span>
+                    Product URL<span className="text-destructive"> *</span>
                   </FormLabel>
                   <FormControl>
                     <Input placeholder="URL" {...field} />
@@ -131,7 +131,7 @@ const OfferForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Offer Type <span className="text-destructive"> *</span>
+                    Product Type <span className="text-destructive"> *</span>
                   </FormLabel>
                   <Select
                     onValueChange={field.onChange}
@@ -139,7 +139,7 @@ const OfferForm = () => {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Offer Type" />
+                        <SelectValue placeholder="Select Product Type" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -287,7 +287,7 @@ const OfferForm = () => {
                 <FormItem>
                   <FormLabel>Suffix </FormLabel>
                   <FormControl>
-                    <Input placeholder="Offer Name (Optional)" {...field} />
+                    <Input placeholder="Product Name (Optional)" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

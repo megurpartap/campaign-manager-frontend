@@ -6,6 +6,7 @@ import Offer from "./pages/Offer";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
+import User from "./pages/User";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
               <Route path="campaign" element={<Campaign />} />
               <Route path="offer" element={<Offer />} />
               <Route path="settings" element={<Settings />} />
+              <Route path="user" element={<User />} />
             </Route>
           </Routes>
         </BrowserRouter>

@@ -76,7 +76,7 @@ const CampaignForm = () => {
   } = useGetOfferNames();
 
   if (offersError) {
-    toast.error("Failed to fetch offers");
+    toast.error("Failed to fetch products");
   }
 
   const optionSchema = z.object({
@@ -89,7 +89,7 @@ const CampaignForm = () => {
       // campaign creation
       adAccountId: z.string({ required_error: "Ad Account is Required" }),
       pageId: z.string({ required_error: "Page is Required" }),
-      offerId: z.string({ required_error: "Offer is Required" }),
+      offerId: z.string({ required_error: "Product is Required" }),
       campaignObjective: z.enum(
         [
           "OUTCOME_APP_PROMOTION",
@@ -167,7 +167,7 @@ const CampaignForm = () => {
         (!isCurrentOfferEU && !data.beneficiaryName),
       {
         message:
-          "Beneficiary Name is required as the offer's country belong to EU.",
+          "Beneficiary Name is required as the product's country belong to EU.",
         path: ["beneficiaryName"],
       }
     );
@@ -603,7 +603,7 @@ const CampaignForm = () => {
       }
       console.log(response);
     } catch (error: any) {
-      toast.error("Failed to create Offer", {
+      toast.error("Failed to create Campaign", {
         description: error.message || "Something went wrong",
       });
     }
@@ -715,7 +715,7 @@ const CampaignForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Select Offer
+                    Select Product
                     <span className="text-destructive"> *</span>
                   </FormLabel>
                   <Select
@@ -728,7 +728,7 @@ const CampaignForm = () => {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select Offer" />
+                        <SelectValue placeholder="Select Product" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -744,8 +744,8 @@ const CampaignForm = () => {
                           </SelectItem>
                         ))}
                       {offersSuccess && offersData.length == 0 && (
-                        <SelectItem value="No Offers Found" disabled={true}>
-                          No Offers Found in your account. Please contact your
+                        <SelectItem value="No Products Found" disabled={true}>
+                          No Products Found in your account. Please contact your
                           admin.
                         </SelectItem>
                       )}

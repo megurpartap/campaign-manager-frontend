@@ -6,21 +6,55 @@ import {
   MegaphoneIcon,
   Package2,
   Settings,
+  User,
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { useQueryClient } from "@tanstack/react-query";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { resetCurrentAdAccount } from "@/store/features/campaigns/campaignSlice";
+import { resetUserData } from "@/store/features/user/userSlice";
+import { RootState } from "@/store/store";
+
+let navigationOptions = [
+  {
+    name: "Home",
+    icon: Home,
+    to: "home",
+    isForAdmin: false,
+  },
+  {
+    name: "Products",
+    icon: Link2,
+    to: "offer",
+    isForAdmin: false,
+  },
+  {
+    name: "Campaigns",
+    icon: MegaphoneIcon,
+    to: "campaign",
+    isForAdmin: false,
+  },
+  {
+    name: "Users",
+    icon: User,
+    to: "user",
+    isForAdmin: true,
+  },
+];
 
 const Sidebar = () => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const isAdmin =
+    useSelector((state: RootState) => state.user.role) === "ADMIN";
+
   const logout = () => {
     localStorage.removeItem("exampleRefreshToken");
     queryClient.clear();
     dispatch(resetCurrentAdAccount());
+    dispatch(resetUserData());
     navigate("/");
   };
   return (
@@ -38,53 +72,60 @@ const Sidebar = () => {
         </div>
         <div className="flex-1">
           <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-            <NavLink
-              to="home"
-              className={({ isActive }) =>
-                [isActive ? "bg-muted" : "text-muted-foreground", ""].join(
-                  " flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary"
-                )
-              }
-            >
-              <Home className="h-4 w-4" />
-              Home
-            </NavLink>
-            <NavLink
-              to="offer"
-              className={({ isActive }) =>
-                [isActive ? "bg-muted" : "text-muted-foreground", ""].join(
-                  " flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary"
-                )
-              }
-            >
-              <Link2 className="h-4 w-4" />
-              Offers
-            </NavLink>
-            <NavLink
-              to="campaign"
-              className={({ isActive }) =>
-                [isActive ? "bg-muted" : "text-muted-foreground", ""].join(
-                  " flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary"
-                )
-              }
-            >
-              <MegaphoneIcon className="h-4 w-4" />
-              Campaigns
-            </NavLink>
+            {useSelector((state: RootState) => state.user.role) === "ADMIN" &&
+              navigationOptions.map((option) => (
+                <NavLink
+                  key={option.name}
+                  to={option.to}
+                  className={({ isActive }) =>
+                    [
+                      isActive ? "bg-muted" : "text-muted-foreground",
+                      "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
+                    ].join(" ")
+                  }
+                >
+                  <option.icon className="h-4 w-4" />
+                  {option.name}
+                </NavLink>
+              ))}
+            {!(
+              useSelector((state: RootState) => state.user.role) === "ADMIN"
+            ) &&
+              navigationOptions
+                .filter((option) => {
+                  return option.isForAdmin !== true;
+                })
+                .map((option) => (
+                  <NavLink
+                    key={option.name}
+                    to={option.to}
+                    className={({ isActive }) =>
+                      [
+                        isActive ? "bg-muted" : "text-muted-foreground",
+                        "flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary",
+                      ].join(" ")
+                    }
+                  >
+                    <option.icon className="h-4 w-4" />
+                    {option.name}
+                  </NavLink>
+                ))}
           </nav>
         </div>
         <div className="mt-auto p-4 text-sm font-medium">
-          <NavLink
-            to="settings"
-            className={({ isActive }) =>
-              [isActive ? "bg-muted" : "text-muted-foreground", ""].join(
-                " flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary"
-              )
-            }
-          >
-            <Settings className="h-4 w-4" />
-            Settings
-          </NavLink>
+          {isAdmin && (
+            <NavLink
+              to="settings"
+              className={({ isActive }) =>
+                [isActive ? "bg-muted" : "text-muted-foreground", ""].join(
+                  " flex items-center gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary"
+                )
+              }
+            >
+              <Settings className="h-4 w-4" />
+              Settings
+            </NavLink>
+          )}
           <div
             onClick={logout}
             className=" flex cursor-pointer items-center text-muted-foreground gap-3 rounded-lg px-3 py-2 transition-all hover:text-primary"

@@ -5,9 +5,12 @@ import conf from "@/config/index.js";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import SignInForm from "@/components/Forms/SignInForm";
+import { useDispatch } from "react-redux";
+import { setUserData } from "@/store/features/user/userSlice";
 
 function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const rt = localStorage.getItem("exampleRefreshToken");
@@ -21,6 +24,7 @@ function Login() {
         .then((response) => {
           if (response.data.success) {
             toast.success("User Already Logged In");
+            dispatch(setUserData(response.data.data.user));
             navigate("/dashboard/home");
           }
         });

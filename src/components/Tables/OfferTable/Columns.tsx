@@ -28,11 +28,11 @@ export const columns: ColumnDef<OfferType>[] = [
   },
   {
     accessorKey: "offerName",
-    header: "Offer Name",
+    header: "Product Name",
   },
   {
     accessorKey: "offerURL",
-    header: "Offer URL",
+    header: "Product URL",
     cell: ({ row }) => {
       return (
         <a
@@ -56,7 +56,7 @@ export const columns: ColumnDef<OfferType>[] = [
   },
   {
     accessorKey: "offerType",
-    header: "Offer Type",
+    header: "Product Type",
   },
   {
     accessorFn: (row) => row.createdBy.username,

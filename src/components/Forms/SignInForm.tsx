@@ -22,8 +22,11 @@ import axios from "axios";
 import conf from "@/config";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUserData } from "@/store/features/user/userSlice";
 
 const SignInForm = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const formSchema = z.object({
     username: z.string().min(1, {
@@ -55,6 +58,7 @@ const SignInForm = () => {
         toast.success("Login Successful", {
           description: "You have successfully logged in",
         });
+        dispatch(setUserData(response.data.data.user));
         navigate("/dashboard/home");
       } else {
         toast.error("Login Failed", {

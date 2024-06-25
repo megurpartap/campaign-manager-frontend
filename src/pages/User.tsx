@@ -9,25 +9,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ListFilter } from "lucide-react";
-import { columns } from "@/components/Tables/OfferTable/Columns";
-import { OfferDataTable } from "@/components/Tables/OfferTable/OfferDataTable";
+import { columns } from "@/components/Tables/AdminUserTable/Columns";
+import { AdminUserDataTable } from "@/components/Tables/AdminUserTable/AdminUserDataTable";
 import { toast } from "sonner";
-import { useGetOffers } from "@/hooks/useGetOffers";
+import { useGetUsers } from "@/hooks/useGetUsers";
 
-const Offer = () => {
+const User = () => {
   const {
-    data: offers,
-    isLoading: offersLoading,
-    isError: offersError,
-  } = useGetOffers();
+    data: Users,
+    isLoading: UsersLoading,
+    isError: UsersError,
+    error: UsersErrorData,
+  } = useGetUsers();
 
-  if (offersError) {
-    toast.error("Failed to fetch Products");
+  if (UsersError) {
+    toast.error("Failed to fetch Users", {
+      // @ts-ignore
+      description: UsersErrorData.response.data.message || "An error occurred",
+    });
   }
 
   return (
     <>
-      <Topbar currentPage="offer" />
+      <Topbar currentPage="user" />
       <div className="justify-end flex mt-3">
         <div className="flex items-center gap-2">
           <DropdownMenu>
@@ -52,13 +56,13 @@ const Offer = () => {
         </div>
       </div>
       <div className="container mx-auto pt-5">
-        {offersLoading && <p>Loading...</p>}
-        {!offersLoading && (
-          <OfferDataTable columns={columns} data={offers || []} />
+        {UsersLoading && <p>Loading...</p>}
+        {!UsersLoading && (
+          <AdminUserDataTable columns={columns} data={Users || []} />
         )}
       </div>
     </>
   );
 };
 
-export default Offer;
+export default User;

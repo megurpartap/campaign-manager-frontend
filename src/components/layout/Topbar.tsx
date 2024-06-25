@@ -13,14 +13,15 @@ import OfferForm from "../Forms/OfferForm";
 import CampaignForm from "../Forms/CampaignForm";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import UserForm from "../Forms/UserForm";
 
 interface TopbarProps {
-  currentPage: "offer" | "campaign";
+  currentPage: "offer" | "campaign" | "user";
 }
 
 const currentPageObject = {
   offer: {
-    title: "Offer",
+    title: "Product",
     description: "This Page is only visible to the admin.",
     formComponent: <OfferForm />,
     refetch: [["offers"]],
@@ -30,6 +31,12 @@ const currentPageObject = {
     description: "This Page is publicly visible",
     formComponent: <CampaignForm />,
     refetch: [["campaigns"], ["adAccounts"]],
+  },
+  user: {
+    title: "User",
+    description: "This Page is only visible to the admin.",
+    formComponent: <UserForm />,
+    refetch: [["users"]],
   },
 };
 

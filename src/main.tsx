@@ -22,6 +22,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           richColors
           expand={true}
           theme="light"
+          duration={3000}
+          closeButton
         />
         {/* <ReactQueryDevtools initialIsOpen={false} /> */}
       </QueryClientProvider>

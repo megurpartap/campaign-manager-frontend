@@ -4,9 +4,12 @@ import { useEffect } from "react";
 import axios from "axios";
 import conf from "@/config";
 import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { resetUserData } from "@/store/features/user/userSlice";
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   useEffect(() => {
     const rt = localStorage.getItem("exampleRefreshToken");
     if (rt && rt !== String(null)) {
@@ -25,6 +28,7 @@ const DashboardLayout = () => {
           toast.error("Session Expired", {
             description: "Please login again",
           });
+          dispatch(resetUserData());
           navigate("/");
         });
     } else {
@@ -32,6 +36,7 @@ const DashboardLayout = () => {
       toast.error("Session Expired", {
         description: "Please login again",
       });
+      dispatch(resetUserData());
       navigate("/");
     }
   }, []);
