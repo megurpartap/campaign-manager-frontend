@@ -2,8 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   currentConnectedAccount: {
-    facebookId: null,
-    fbFullName: null,
+    facebookId: undefined,
+    fbFullName: undefined,
+  },
+  currentFbAccountCampaignPage: {
+    facebookId: undefined,
+    fbFullName: undefined,
   },
 };
 
@@ -17,14 +21,27 @@ const facebookSlice = createSlice({
     },
     resetCurrentConnectedAccount: (state) => {
       state.currentConnectedAccount = {
-        facebookId: null,
-        fbFullName: null,
+        facebookId: undefined,
+        fbFullName: undefined,
+      };
+    },
+    setCurrentFbAccountCampaignPage: (state, action) => {
+      state.currentFbAccountCampaignPage = action.payload;
+    },
+    resetCurrentFbAccountCampaignPage: (state) => {
+      state.currentFbAccountCampaignPage = {
+        facebookId: undefined,
+        fbFullName: undefined,
       };
     },
   },
 });
 
-export const { setCurrentConnectedAccount, resetCurrentConnectedAccount } =
-  facebookSlice.actions;
+export const {
+  setCurrentConnectedAccount,
+  resetCurrentConnectedAccount,
+  setCurrentFbAccountCampaignPage,
+  resetCurrentFbAccountCampaignPage,
+} = facebookSlice.actions;
 
 export default facebookSlice.reducer;

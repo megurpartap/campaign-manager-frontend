@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import UserForm from "../Forms/UserForm";
 
 interface TopbarProps {
-  currentPage: "offer" | "campaign" | "user";
+  currentPage: "offer" | "campaign" | "user" | "campaignAdmin";
 }
 
 const currentPageObject = {
@@ -37,6 +37,12 @@ const currentPageObject = {
     description: "This Page is only visible to the admin.",
     formComponent: <UserForm />,
     refetch: [["users"]],
+  },
+  campaignAdmin: {
+    title: "Campaign",
+    description: "This Page is only visible to the admin.",
+    formComponent: <CampaignForm />,
+    refetch: [["connectedFacebookAccount"], ["adAccounts"], ["campaignsAdmin"]],
   },
 };
 
@@ -70,24 +76,6 @@ const Topbar = ({ currentPage }: TopbarProps) => {
         `Some Error Occures while refreshing ${currentPageObject[currentPage].title}s`
       );
     });
-
-    // queryClient
-    //   .refetchQueries(
-    //     {
-    //       queryKey: currentPageObject[currentPage].refetch,
-    //       type: "active",
-    //     },
-    //     {
-    //       throwOnError: true,
-    //     }
-    //   )
-    //   .then(() => {
-    //     toast.success(`${currentPageObject[currentPage].title}s Refreshed`);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     toast.error(`Cannot Refresh ${currentPageObject[currentPage].title}s`);
-    //   });
   };
   return (
     <>

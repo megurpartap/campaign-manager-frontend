@@ -37,6 +37,13 @@ let navigationOptions = [
     isForEmployee: true,
   },
   {
+    name: "Campaigns",
+    icon: MegaphoneIcon,
+    to: "adminCampaign",
+    isForAdmin: true,
+    isForEmployee: false,
+  },
+  {
     name: "Users",
     icon: User,
     to: "user",

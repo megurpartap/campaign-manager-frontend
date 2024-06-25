@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  currentAdAccount: null,
+  currentAdAccount: undefined,
+  currentAdAccountAdminCampaignPage: undefined,
 };
 
 const campaignSlice = createSlice({
@@ -13,12 +14,22 @@ const campaignSlice = createSlice({
       state.currentAdAccount = action.payload;
     },
     resetCurrentAdAccount: (state) => {
-      state.currentAdAccount = null;
+      state.currentAdAccount = undefined;
+    },
+    setCurrentAdAccountAdminCampaignPage: (state, action) => {
+      state.currentAdAccountAdminCampaignPage = action.payload;
+    },
+    resetCurrentAdAccountAdminCampaignPage: (state) => {
+      state.currentAdAccountAdminCampaignPage = undefined;
     },
   },
 });
 
-export const { setCurrentAdAccount, resetCurrentAdAccount } =
-  campaignSlice.actions;
+export const {
+  setCurrentAdAccount,
+  resetCurrentAdAccount,
+  setCurrentAdAccountAdminCampaignPage,
+  resetCurrentAdAccountAdminCampaignPage,
+} = campaignSlice.actions;
 
 export default campaignSlice.reducer;
