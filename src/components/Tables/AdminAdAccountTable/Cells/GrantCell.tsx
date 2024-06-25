@@ -102,7 +102,7 @@ const GrantCell = ({ row }: any) => {
         <DialogTrigger asChild>
           <Button
             size="sm"
-            className=" bg-muted text-black text-xs cursor-pointer rounded-sm hover:text-white"
+            className=" bg-muted dark:bg-slate-200 text-black  text-xs cursor-pointer rounded-sm hover:text-white"
           >
             Grant
           </Button>

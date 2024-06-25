@@ -73,10 +73,10 @@ const ConnectWithFacebookBox = () => {
       </CardHeader>
       <CardFooter>
         <Button
-          className=" bg-facebook hover:bg-blue-700"
+          className=" bg-facebook hover:bg-blue-700 text-white"
           onClick={() => login()}
         >
-          Connect With Facebook <FaFacebook size={"sm"} className="ml-3" />
+          Connect With Facebook <FaFacebook size={"sm"} className="ml-3 " />
         </Button>
       </CardFooter>
     </Card>
