@@ -1,3 +1,5 @@
+import conf from "@/config";
+
 export const getFacebookLoginStatus = () => {
   return new Promise((resolve) => {
     window.FB.getLoginStatus((response) => {
@@ -12,7 +14,7 @@ export const fbLogin = () => {
       (response) => {
         resolve(response);
       },
-      { config_id: "317113771370256" }
+      { config_id: conf.FACEBOOK_CONFIG_ID }
     );
   });
 };
