@@ -38,6 +38,8 @@ import { toast } from "sonner";
 import axios from "axios";
 import conf from "@/config";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 const formSchema = z.object({
   employeeId: z
@@ -46,6 +48,9 @@ const formSchema = z.object({
 });
 
 const GrantAccessButton = ({ table }: any) => {
+  const currentFacebookId = useSelector(
+    (state: RootState) => state.facebook.currentConnectedAccount.facebookId
+  );
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -65,7 +70,7 @@ const GrantAccessButton = ({ table }: any) => {
       return {
         adAccountId: row.original.id,
         adAccountName: row.original.name,
-        facebookId: "403959165897949",
+        facebookId: currentFacebookId,
       };
     });
     console.log(table.getFilteredSelectedRowModel().rows);
