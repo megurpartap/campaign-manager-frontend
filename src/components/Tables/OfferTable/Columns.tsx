@@ -59,7 +59,7 @@ export const columns: ColumnDef<OfferType>[] = [
     header: "Product Type",
   },
   {
-    accessorFn: (row) => row.createdBy.username,
+    accessorFn: (row) => row.createdBy?.username || "-",
     header: "Created By",
   },
 ];

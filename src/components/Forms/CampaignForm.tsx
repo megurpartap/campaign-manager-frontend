@@ -211,37 +211,6 @@ const CampaignForm = () => {
   const watchDynamicCreative = form.watch("isDynamicCreative");
   const fileRef = form.register("adImage");
 
-  // async function getImageHash(uploadedFile: File | undefined) {
-  //   const file = uploadedFile;
-  //   if (!file) {
-  //     toast.error("No file selected");
-  //     return;
-  //   }
-  //   const formData = new FormData();
-  //   formData.append("adImage", file);
-  //   try {
-  //     const response = await axios.post(
-  //       `${conf.API_URL}/fb/getImageHash`,
-  //       formData,
-  //       {
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //           Authorization: `Bearer ${localStorage.getItem(
-  //             "exampleRefreshToken"
-  //           )}`,
-  //         },
-  //       }
-  //     );
-  //     if (response.status) return response.data.data.images.bytes.hash;
-  //     throw Error("Failed to upload image to Facebook");
-  //   } catch (error: any) {
-  //     toast.error("Failed to upload image", {
-  //       description: error.message || "Something went wrong",
-  //     });
-  //     console.error(error.message);
-  //   }
-  // }
-
   async function getMultipleImageHash({
     uploadedFiles,
     adAccountId,
@@ -1007,6 +976,23 @@ const CampaignForm = () => {
                         placeholder="shadcn"
                         accept="image/*"
                         {...fileRef}
+                        onChange={(e) => {
+                          console.log(e.target.files);
+                          if (!e.target.files || e.target.files?.length < 1)
+                            return;
+                          const isBig = Array.from(e.target.files).some(
+                            (file) => {
+                              if (file.size > 31457280) {
+                                return true;
+                              }
+                              return false;
+                            }
+                          );
+                          if (isBig) {
+                            toast.error("File size should be less than 30MB");
+                            return;
+                          }
+                        }}
                       />
                     </FormControl>
                     <FormMessage />

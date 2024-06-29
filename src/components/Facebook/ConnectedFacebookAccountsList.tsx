@@ -60,30 +60,38 @@ const ConnectedFacebookAccountsList = () => {
   }
 
   const disconnectFbAccount = async (facebookId: string) => {
-    const response = await axios.delete(
-      `${conf.API_URL}/fb/disconnectFbAccount?facebookId=${facebookId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem(
-            "exampleRefreshToken"
-          )}`,
-        },
+    try {
+      const response = await axios.delete(
+        `${conf.API_URL}/fb/disconnectFbAccount?facebookId=${facebookId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem(
+              "exampleRefreshToken"
+            )}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        toast.success("Facebook Account Disconnected", {
+          description:
+            "You have successfully disconnected the facebook account",
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["connectedFacebookAccount"],
+          type: "active",
+        });
+        if (currentFacebookAccount === facebookId) {
+          dispatch(resetCurrentConnectedAccount());
+        }
+      } else {
+        toast.error("Could not disconnect Facebook Account", {
+          description: "Some Error Occured. Please try again",
+        });
       }
-    );
-    if (response.status === 200) {
-      toast.success("Facebook Account Disconnected", {
-        description: "You have successfully disconnected the facebook account",
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["connectedFacebookAccount"],
-        type: "active",
-      });
-      if (currentFacebookAccount === facebookId) {
-        dispatch(resetCurrentConnectedAccount());
-      }
-    } else {
+    } catch (error: any) {
       toast.error("Could not disconnect Facebook Account", {
-        description: "Some Error Occured. Please try again",
+        description:
+          error.response.data.message || "Some Error Occured. Please try again",
       });
     }
   };
