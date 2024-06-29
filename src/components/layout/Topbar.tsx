@@ -14,6 +14,7 @@ import CampaignForm from "../Forms/CampaignForm";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import UserForm from "../Forms/UserForm";
+import AdminCampaignForm from "../Forms/AdminCampaignForm";
 
 interface TopbarProps {
   currentPage: "offer" | "campaign" | "user" | "campaignAdmin";
@@ -41,7 +42,7 @@ const currentPageObject = {
   campaignAdmin: {
     title: "Campaign",
     description: "This Page is only visible to the admin.",
-    formComponent: <CampaignForm />,
+    formComponent: <AdminCampaignForm />,
     refetch: [["connectedFacebookAccount"], ["adAccounts"], ["campaignsAdmin"]],
   },
 };
